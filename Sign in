@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Admin Panel</title>
+    <style>
+        /* Bədən (Body) üçün stil */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #2980b9, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        /* Giriş formunun stil */
+        .login-container,
+        .add-user-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .login-container.active,
+        .add-user-container.active {
+            display: block;
+        }
+
+        .login-container h2,
+        .add-user-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .login-container label,
+        .add-user-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"],
+        .add-user-container input[type="text"],
+        .add-user-container input[type="password"],
+        .add-user-container input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+        }
+
+        .login-container input[type="submit"],
+        .add-user-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #2980b9;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .login-container input[type="submit"]:hover,
+        .add-user-container input[type="submit"]:hover {
+            background-color: #3498db;
+        }
+
+        .login-container .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sign In Bölməsi -->
+    <div class="login-container active" id="login-container">
+        <h2>Sign In</h2>
+        <form onsubmit="checkLogin(); return false;">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <div id="error-message" class="error"></div>
+            
+            <input type="submit" value="Sign In">
+        </form>
+    </div>
+
+    <!-- Yeni İstifadəçi Əlavə Bölməsi (Admin Paneli) -->
+    <div class="add-user-container" id="add-user-container">
+        <h2>Add New User</h2>
+        <form onsubmit="addNewUser(); return false;">
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" name="newUsername" required>
+
+            <label for="newPassword">Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+
+            <label for="newRedirectUrl">Redirect URL:</label>
+            <input type="url" id="newRedirectUrl" name="newRedirectUrl" required>
+
+            <input type="submit" value="Add User">
+        </form>
+    </div>
+
+    <script>
+        // Mövcud istifadəçilərin siyahısı
+        var users = {
+            "userA": {
+                "password": "passwordA",
+                "redirectUrl": "https://www.youtube.com/"
+            },
+            "userB": {
+                "password": "passwordB",
+                "redirectUrl": "https://www.example.com/linkB.html"
+            },
+            "admin": {
+                "password": "adminPass",
+                "redirectUrl": "admin"
+            }
+        };
+
+        // Giriş yoxlaması funksiyası
+        function checkLogin() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var errorMessage = document.getElementById("error-message");
+
+            if (users[username] && users[username].password === password) {
+                if (users[username].redirectUrl === "admin") {
+                    showAdminPanel();
+                } else {
+                    var redirectUrl = users[username].redirectUrl;
+                    window.location.href = redirectUrl; // Yönləndirmə
+                }
+            } else {
+                errorMessage.textContent = "Incorrect username or password.";
+            }
+        }
+
+        // Admin panelinə keçid funksiyası
+        function showAdminPanel() {
+            document.getElementById('login-container').classList.remove('active');
+            document.getElementById('add-user-container').classList.add('active');
+        }
+
+        // Yeni istifadəçi əlavə edən funksiyanı yerləşdirmək üçün
+        function addNewUser() {
+            var newUsername = document.getElementById("newUsername").value;
+            var newPassword = document.getElementById("newPassword").value;
+            var newRedirectUrl = document.getElementById("newRedirectUrl").value;
+
+            users[newUsername] = {
+                "password": newPassword,
+                "redirectUrl": newRedirectUrl
+            };
+            alert("New user added successfully!");
+            showAdminLogin();
+        }
+
+        // Admin girişindən sonra ana səhifəyə qayıtma funksiyası
+        function showAdminLogin() {
+            document.getElementById('login-container').classList.add('active');
+            document.getElementById('add-user-container').classList.remove('active');
+        }
+    </script>
+
+</body>
+</html>
